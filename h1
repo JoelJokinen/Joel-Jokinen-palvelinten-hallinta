@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H1 – Hei Ansible</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            margin-left: 230px;
+            padding: 40px;
+            background-color: #15171c;
+            color: #e5e7eb;
+            font-family: Arial, sans-serif;
+            line-height: 1.7;
+        }
+
+        nav {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            width: 195px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+        }
+
+        nav h3 {
+            color: #222222;
+            margin-top: 0;
+            font-size: 17px;
+        }
+
+        nav a {
+            display: block;
+            color: #333333;
+            text-decoration: none;
+            padding: 8px 0;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        nav a:hover {
+            color: #0077cc;
+        }
+
+        main {
+            max-width: 950px;
+            margin: auto;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #ffffff;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 45px;
+            color: #60a5fa;
+            font-size: 25px;
+        }
+
+        h3 {
+            color: #93c5fd;
+            margin-top: 25px;
+        }
+
+        p {
+            color: #d1d5db;
+            margin-bottom: 18px;
+        }
+
+        a {
+            color: #60a5fa;
+        }
+
+        .code-container {
+            margin: 20px 0;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            padding: 8px 15px;
+            background-color: #21262d;
+            color: #9ca3af;
+            font-size: 13px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        pre {
+            margin: 0;
+            padding: 18px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            color: #a5d6ff;
+            white-space: pre;
+        }
+
+        .inline-code {
+            background-color: #292e38;
+            color: #93c5fd;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+        }
+
+        figure {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #444444;
+        }
+
+        figcaption {
+            color: #9ca3af;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .info {
+            background-color: #1e293b;
+            border-left: 4px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        @media (max-width: 750px) {
+            body {
+                margin-left: 0;
+                padding: 20px;
+                padding-top: 170px;
+            }
+
+            nav {
+                width: calc(100% - 30px);
+                top: 10px;
+                left: 15px;
+                padding: 10px 15px;
+            }
+
+            nav h3 {
+                margin-bottom: 5px;
+            }
+
+            nav a {
+                display: inline-block;
+                margin-right: 15px;
+                border-bottom: none;
+            }
+
+            h1 {
+                font-size: 29px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <h3>Navigaatio</h3>
+    <a href="index.html">Johdanto</a>
+    <a href="h0.html">H0 – Oikeasti netissä</a>
+    <a href="h1.html">H1 – Hei Ansible</a>
+</nav>
+
+<main>
+
+    <h1>H1 – Hei Ansible</h1>
+
+    <p>
+        Tässä raportissa käsittelen palvelinten hallinnan H1-tehtävää,
+        jossa asennetaan SSH-demoni, automatisoidaan SSH-kirjautuminen
+        julkisella avaimella ja tutustutaan Ansibleen. Tehtävässä
+        käytän Debian Linux -käyttöjärjestelmää.
+    </p>
+
+    <h2>a) Paikallista</h2>
+
+    <p>
+        Aikaisemman tehtävän raportti löytyy osoitteesta:
+        <a href="https://joeljokinen.github.io/Joel-Jokinen-palvelinten-hallinta/h0.html">
+            H0 – Oikeasti netissä
+        </a>.
+    </p>
+
+    <h2>b) Sshecrets – SSH-demonin asentaminen</h2>
+
+    <p>
+        Ensimmäisenä kirjauduin Debianiin ja päivitin pakettiluettelot
+        komennolla <span class="inline-code">apt update</span>.
+        Sen jälkeen asensin SSH-demonin komennolla
+        <span class="inline-code">apt install openssh-server</span>.
+        Komento asentaa OpenSSH-palvelimen, jonka avulla koneeseen
+        voidaan muodostaa SSH-yhteys.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Debian (root)</div>
+        <pre><code>apt update
+apt install openssh-server</code></pre>
+    </div>
+
+    <p>
+        Seuraavaksi suoritin komennon
+        <span class="inline-code">systemctl enable --now ssh</span>.
+        Se asettaa SSH-demonin käynnistymään automaattisesti koneen
+        käynnistyessä ja käynnistää sen samalla heti.
+        Tämän jälkeen tarkistin demonin tilan komennolla
+        <span class="inline-code">systemctl status ssh</span>.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – SSH-palvelun käynnistäminen</div>
+        <pre><code>systemctl enable --now ssh
+systemctl status ssh</code></pre>
+    </div>
+
+    <figure>
+        <img src="kuva1.png" alt="SSH-palvelun tila Debianissa">
+        <figcaption>Kuva 1. SSH-palvelu on asennettu ja käynnissä.</figcaption>
+    </figure>
+
+    <p>
+        Lopuksi testasin SSH-yhteyden muodostamista kirjautumalla
+        omalle koneelleni komennolla
+        <span class="inline-code">ssh joel@localhost</span>.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – SSH-yhteyden testaaminen</div>
+        <pre><code>ssh joel@localhost</code></pre>
+    </div>
+
+    <h2>c) Pubkey – SSH-kirjautumisen automatisointi</h2>
+
+    <p>
+        SSH-kirjautumisen automatisointia varten tarvitaan julkinen
+        ja yksityinen SSH-avain. Olin luonut avainparin jo aikaisemmassa
+        tehtävässä, joten en luonut uutta. Avainparin luominen onnistuu
+        komennolla:
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – SSH-avaimen luominen</div>
+        <pre><code>ssh-keygen -t ed25519</code></pre>
+    </div>
+
+    <p>
+        Komento kysyy ensin avaimen tallennuspaikkaa ja sen jälkeen
+        mahdollista salalausetta eli passphrasea. Salalauseen voi jättää
+        tyhjäksi, jolloin avaimen käyttö on helpompaa, mutta tällöin
+        yksityinen avain ei ole suojattu salalauseella.
+    </p>
+
+    <p>
+        Seuraavaksi kopioin julkisen avaimen localhost-koneelle
+        komennolla <span class="inline-code">ssh-copy-id joel@localhost</span>.
+        Komento kysyi käyttäjän salasanaa ja lisäsi julkisen avaimen
+        käyttäjän <span class="inline-code">authorized_keys</span>-tiedostoon.
+        Tiedoston sijainti on <span class="inline-code">/home/joel/.ssh/authorized_keys</span>.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Julkisen avaimen kopiointi</div>
+        <pre><code>ssh-copy-id joel@localhost</code></pre>
+    </div>
+
+    <p>
+        Tämän jälkeen testasin kirjautumisen uudelleen komennolla
+        <span class="inline-code">ssh joel@localhost</span>.
+        Nyt kirjautuminen onnistui julkisella avaimella ilman käyttäjän
+        salasanan kysymistä.
+    </p>
+
+    <figure>
+        <img src="kuva2.png" alt="SSH-kirjautuminen julkisella avaimella">
+        <figcaption>Kuva 2. SSH-kirjautuminen onnistuu julkisella avaimella.</figcaption>
+    </figure>
+
+    <h2>d) Hei Ansible – Ansiblella automatisointi</h2>
+
+    <p>
+        Ensimmäisenä asensin Ansible-ohjelmiston Debianille root-käyttäjällä
+        komennolla <span class="inline-code">apt install ansible</span>.
+        Asennuksen jälkeen tarkistin version komennolla
+        <span class="inline-code">ansible --version</span>.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Ansible asennus</div>
+        <pre><code>apt install ansible
+ansible --version</code></pre>
+    </div>
+
+    <p>
+        Seuraavaksi loin Ansible-projektia varten oman kansion
+        komennoilla <span class="inline-code">mkdir ansible-hello</span>
+        ja <span class="inline-code">cd ansible-hello</span>.
+        Projektin sisälle loin inventaariotiedoston nimeltä
+        <span class="inline-code">hosts.ini</span>.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Projektikansion luominen</div>
+        <pre><code>mkdir ansible-hello
+cd ansible-hello
+nano hosts.ini</code></pre>
+    </div>
+
+    <p>
+        Täytin hosts.ini-tiedoston seuraavalla rivillä:
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">hosts.ini</div>
+        <pre><code>localhost ansible_connection=ssh ansible_user=joel ansible_ssh_private_key_file=/home/joel/.ssh/id_ed25519</code></pre>
+    </div>
+
+    <p>
+        Tiedosto määrittelee kohdekoneen eli localhostin, yhteystavaksi
+        SSH:n, käytettäväksi käyttäjäksi joelin ja käytettävän yksityisen
+        SSH-avaimen sijainnin.
+    </p>
+
+    <p>
+        Testasin seuraavaksi, että Ansible pystyy muodostamaan SSH-yhteyden
+        ja suorittamaan komentoja kohdekoneella. Käytin tähän uptime-komentoa.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Ansible SSH-yhteyden testaaminen</div>
+        <pre><code>ansible all -a 'uptime' -i hosts.ini</code></pre>
+    </div>
+
+    <p>
+        Seuraavaksi loin Ansiblelle asetustiedoston
+        <span class="inline-code">ansible.cfg</span>. Määrittelin siinä
+        inventaariotiedoston automaattisesti käytettäväksi ja otin käyttöön
+        tehtävien argumenttien tulostamisen.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">ansible.cfg</div>
+        <pre><code>[defaults]
+inventory = hosts.ini
+display_args_to_stdout = true</code></pre>
+    </div>
+
+    <p>
+        Tämän jälkeen loin <span class="inline-code">site.yml</span>-tiedoston,
+        joka määrittelee, mitä rooleja kohdekoneella suoritetaan.
+        Tässä tapauksessa halusin suorittaa hello-roolin kaikilla
+        inventaariossa määritellyillä koneilla.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">site.yml</div>
+        <pre><code>- hosts: all
+  roles:
+    - hello</code></pre>
+    </div>
+
+    <p>
+        YAML-tiedostoja kirjoittaessa on tärkeää kiinnittää huomiota
+        sisennyksiin. Sisennyksissä käytetään välilyöntejä eikä
+        sarkainnäppäintä.
+    </p>
+
+    <p>
+        Seuraavaksi loin Hello-roolin vaatiman kansiorakenteen ja
+        tehtävätiedoston.
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Hello-roolin luominen</div>
+        <pre><code>mkdir -p roles/hello/tasks/
+nano roles/hello/tasks/main.yml</code></pre>
+    </div>
+
+    <p>
+        Kirjoitin main.yml-tiedostoon seuraavan koodin:
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">roles/hello/tasks/main.yml</div>
+        <pre><code>- copy:
+    dest: /tmp/hello-ansible
+    content: "Hahaa ansiblehan toimii!\n"</code></pre>
+    </div>
+
+    <p>
+        Koodissa määritellään copy-moduuli, joka luo kohdekoneelle
+        tiedoston <span class="inline-code">/tmp/hello-ansible</span>.
+        Tiedoston sisältö määräytyy content-kohdassa määritellyn
+        tekstin perusteella.
+    </p>
+
+    <p>
+        Kun kaikki tiedostot ja kansiot olivat valmiina, suoritin
+        Ansible-playbookin komennolla:
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Playbookin suorittaminen</div>
+        <pre><code>ansible-playbook site.yml</code></pre>
+    </div>
+
+    <p>
+        Komento suoritti site.yml-tiedostossa määritellyn hello-roolin.
+        Onnistuneessa suorituksessa Ansible ilmoittaa tehtävien tilat.
+        Esimerkiksi changed tarkoittaa, että kohdekoneella tehtiin
+        muutos. (Kuva 3.)
+    </p>
+
+    <figure>
+        <img src="kuva3.png" alt="Ansible-playbookin suoritus">
+        <figcaption>Kuva 3. Ansible-playbook suoritettiin onnistuneesti.</figcaption>
+    </figure>
+
+    <p>
+        Lopuksi varmistin, että tiedosto todella syntyi kohdekoneelle
+        ja että sen sisältö oli oikein. Tein tarkistuksen SSH:n kautta
+        seuraavalla komennolla:
+    </p>
+
+    <div class="code-container">
+        <div class="code-header">Terminal – Luodun tiedoston tarkistaminen SSH:n kautta</div>
+        <pre><code>ssh joel@localhost 'cat /tmp/hello-ansible'</code></pre>
+    </div>
+
+    <figure>
+        <img src="kuva4.png" alt="Ansiblella luodun tiedoston sisältö">
+        <figcaption>Kuva 4. Ansiblella luodun tiedoston sisältö tarkistettiin SSH:n kautta.</figcaption>
+    </figure>
+
+    <div class="info">
+        <strong>Tehtävän lopputulos:</strong>
+        Ansiblella onnistuttiin muodostamaan SSH-yhteys localhost-koneelle
+        ja luomaan kohdekoneelle tiedosto automaattisesti määritellyllä
+        sisällöllä.
+    </div>
+
+    <footer>
+        <p>Palvelinten hallinta – H1 – Hei Ansible</p>
+        <p>Joel Jokinen</p>
+    </footer>
+
+</main>
+
+</body>
+</html>
